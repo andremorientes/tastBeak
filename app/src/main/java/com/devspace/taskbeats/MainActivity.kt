@@ -2,31 +2,38 @@ package com.devspace.taskbeats
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
-   val db  by lazy {
-       Room.databaseBuilder(
-           applicationContext,
-           TaskBeatDataBase::class.java, "databas-task-beat"
-       ).build()
-   }
+    val db by lazy {
+        Room.databaseBuilder(
+            applicationContext,
+            TaskBeatDataBase::class.java, "databas-task-beat"
+        ).build()
+    }
 
     private val categoryDao by lazy {
         db.getCategoryDao()
+    }
+
+    private val taskDao by lazy {
+        db.getTaskDao()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        insertDeafultCategory()
+        //insertDeafultCategory()
+        //insertDefaultTask()
 
         val rvCategory = findViewById<RecyclerView>(R.id.rv_categories)
         val rvTask = findViewById<RecyclerView>(R.id.rv_tasks)
@@ -35,15 +42,15 @@ class MainActivity : AppCompatActivity() {
         val categoryAdapter = CategoryListAdapter()
 
         categoryAdapter.setOnClickListener { selected ->
-            val categoryTemp = categories.map { item ->
+           /* val categoryTemp = categories.map { item ->
                 when {
                     item.name == selected.name && !item.isSelected -> item.copy(isSelected = true)
                     item.name == selected.name && item.isSelected -> item.copy(isSelected = false)
                     else -> item
                 }
-            }
+            }*/
 
-            val taskTemp =
+           /* val taskTemp =
                 if (selected.name != "ALL") {
                     tasks.filter { it.category == selected.name }
                 } else {
@@ -51,33 +58,70 @@ class MainActivity : AppCompatActivity() {
                 }
             taskAdapter.submitList(taskTemp)
 
-            categoryAdapter.submitList(categoryTemp)
+            categoryAdapter.submitList(categoryTemp) */
         }
 
         rvCategory.adapter = categoryAdapter
         getCategoriesFromDatabase(categoryAdapter)
+
         rvTask.adapter = taskAdapter
-        taskAdapter.submitList(tasks)
+        getTaskFromDatabase(taskAdapter)
+        // taskAdapter.submitList(tasks)
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
+   /* @OptIn(DelicateCoroutinesApi::class)
     private fun insertDeafultCategory() {
 
-        val categoriesEntity= categories.map {
+        val categoriesEntity = categories.map {
             CategoryEntity(
                 name = it.name,
                 isSelected = it.isSelected
             )
         }
 
-        GlobalScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) {
             categoryDao.insertAll(categoriesEntity)
+        }
+
+    }*/
+
+   /* @OptIn(DelicateCoroutinesApi::class)
+    private fun insertDefaultTask() {
+        val taskEntities = tasks.map {
+            TaskEntity(
+                category = it.category,
+                name = it.name
+            )
+        }
+
+        GlobalScope.launch(Dispatchers.IO) {
+            taskDao.insertAll(taskEntities)
+        }
+    }*/
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun getTaskFromDatabase(taskAdapter: TaskListAdapter) {
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            val taskFromDb: List<TaskEntity> = taskDao.getAll()
+
+            val taskiesUiData = taskFromDb.map {
+                TaskUiData(
+                    name = it.name,
+                    category = it.category
+                )
+            }
+            withContext(Dispatchers.Main){
+                taskAdapter.submitList(taskiesUiData)
+            }
+
         }
 
     }
 
+
     private fun getCategoriesFromDatabase(categoryListAdapter: CategoryListAdapter) {
-        GlobalScope.launch (Dispatchers.IO){
+        lifecycleScope.launch(Dispatchers.IO) {
             val categorieFromDb: List<CategoryEntity> = categoryDao.getlAll()
 
             val categoriesUiData = categorieFromDb.map {
@@ -85,14 +129,26 @@ class MainActivity : AppCompatActivity() {
                     name = it.name,
                     isSelected = it.isSelected
                 )
+            }.toMutableList()
+
+            //add fake + category
+
+            categoriesUiData.add(
+                CategoryUiData(
+                    name = "+",
+                    isSelected = false
+                )
+            )
+            withContext(Dispatchers.Main){
+                categoryListAdapter.submitList(categoriesUiData)
             }
-            categoryListAdapter.submitList(categoriesUiData)
+
 
         }
     }
 }
 
-val categories = listOf(
+/*val categories = listOf(
     CategoryUiData(
         name = "ALL",
         isSelected = false
@@ -117,51 +173,5 @@ val categories = listOf(
         name = "HEALTH",
         isSelected = false
     ),
-)
+)*/
 
-val tasks = listOf(
-    TaskUiData(
-        "Ler 10 páginas do livro atual",
-        "STUDY"
-    ),
-    TaskUiData(
-        "45 min de treino na academia",
-        "HEALTH"
-    ),
-    TaskUiData(
-        "Correr 5km",
-        "HEALTH"
-    ),
-    TaskUiData(
-        "Meditar por 10 min",
-        "WELLNESS"
-    ),
-    TaskUiData(
-        "Silêncio total por 5 min",
-        "WELLNESS"
-    ),
-    TaskUiData(
-        "Descer o livo",
-        "HOME"
-    ),
-    TaskUiData(
-        "Tirar caixas da garagem",
-        "HOME"
-    ),
-    TaskUiData(
-        "Lavar o carro",
-        "HOME"
-    ),
-    TaskUiData(
-        "Gravar aulas DevSpace",
-        "WORK"
-    ),
-    TaskUiData(
-        "Criar planejamento de vídeos da semana",
-        "WORK"
-    ),
-    TaskUiData(
-        "Soltar reels da semana",
-        "WORK"
-    ),
-)

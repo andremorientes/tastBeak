@@ -57,4 +57,6 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     testImplementation("androidx.room:room-testing:$room_version")
+
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")  // ou a versão mais recente
 }
