@@ -6,6 +6,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 import androidx.room.Room
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -43,15 +44,30 @@ class MainActivity : AppCompatActivity() {
 
         val rvCategory = findViewById<RecyclerView>(R.id.rv_categories)
         val rvTask = findViewById<RecyclerView>(R.id.rv_tasks)
-
+        val fabCreateTask = findViewById<FloatingActionButton>(R.id.fab_create_task)
         val taskAdapter = TaskListAdapter()
+
+
+
+        fabCreateTask.setOnClickListener {
+
+            val createTaskBottomSheet= CreateTaskBottomSheet(
+                categories
+            ){taskToBeCreated->
+
+            }
+            createTaskBottomSheet.show(
+                supportFragmentManager,
+                "createTaskBottomSheet"
+            )
+        }
 
 
         categoryAdapter.setOnClickListener { selected ->
             if (selected.name == "+") {
-                val createCategoryBottomSheet = CreateCategoryBottomSheet{categoryName->
+                val createCategoryBottomSheet = CreateCategoryBottomSheet { categoryName ->
 
-                    val categoryEntity= CategoryEntity(
+                    val categoryEntity = CategoryEntity(
                         name = categoryName,
                         isSelected = false
                     )
@@ -146,33 +162,32 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun getCategoriesFromDatabase() {
-            val categorieFromDb: List<CategoryEntity> = categoryDao.getlAll()
+        val categorieFromDb: List<CategoryEntity> = categoryDao.getlAll()
 
-            val categoriesUiData = categorieFromDb.map {
-                CategoryUiData(
-                    name = it.name,
-                    isSelected = it.isSelected
-                )
-            }.toMutableList()
-
-            //add fake + category
-            categoriesUiData.add(
-                CategoryUiData(
-                    name = "+",
-                    isSelected = false
-                )
+        val categoriesUiData = categorieFromDb.map {
+            CategoryUiData(
+                name = it.name,
+                isSelected = it.isSelected
             )
+        }.toMutableList()
 
-            lifecycleScope.launch(Dispatchers.Main) {
-                categories = categoriesUiData
-                categoryAdapter.submitList(categoriesUiData)
-            }
+        //add fake + category
+        categoriesUiData.add(
+            CategoryUiData(
+                name = "+",
+                isSelected = false
+            )
+        )
 
+        lifecycleScope.launch(Dispatchers.Main) {
+            categories = categoriesUiData
+            categoryAdapter.submitList(categoriesUiData)
+        }
 
 
     }
 
-    private fun insertCategory(categoryEntity: CategoryEntity){
+    private fun insertCategory(categoryEntity: CategoryEntity) {
 
         lifecycleScope.launch(Dispatchers.IO) {
             categoryDao.insert(categoryEntity)
