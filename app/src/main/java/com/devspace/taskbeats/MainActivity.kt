@@ -17,6 +17,7 @@ class MainActivity : AppCompatActivity() {
 
     private var categories = listOf<CategoryUiData>()
     private var tasks = listOf<TaskUiData>()
+    private val categoryAdapter = CategoryListAdapter()
 
     val db by lazy {
         Room.databaseBuilder(
@@ -44,12 +45,18 @@ class MainActivity : AppCompatActivity() {
         val rvTask = findViewById<RecyclerView>(R.id.rv_tasks)
 
         val taskAdapter = TaskListAdapter()
-        val categoryAdapter = CategoryListAdapter()
+
 
         categoryAdapter.setOnClickListener { selected ->
             if (selected.name == "+") {
+                val createCategoryBottomSheet = CreateCategoryBottomSheet{categoryName->
 
-                val createCategoryBottomSheet = CreateCategoryBottomSheet()
+                    val categoryEntity= CategoryEntity(
+                        name = categoryName,
+                        isSelected = false
+                    )
+                    insertCategory(categoryEntity)
+                }
 
                 createCategoryBottomSheet.show(supportFragmentManager, "createCategoryBottomSheet")
 
@@ -76,7 +83,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         rvCategory.adapter = categoryAdapter
-        getCategoriesFromDatabase(categoryAdapter)
+        lifecycleScope.launch(Dispatchers.IO) {
+            getCategoriesFromDatabase()
+        }
 
         rvTask.adapter = taskAdapter
         getTaskFromDatabase(taskAdapter)
@@ -136,8 +145,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun getCategoriesFromDatabase(categoryListAdapter: CategoryListAdapter) {
-        lifecycleScope.launch(Dispatchers.IO) {
+    private fun getCategoriesFromDatabase() {
             val categorieFromDb: List<CategoryEntity> = categoryDao.getlAll()
 
             val categoriesUiData = categorieFromDb.map {
@@ -155,40 +163,23 @@ class MainActivity : AppCompatActivity() {
                 )
             )
 
-            withContext(Dispatchers.Main) {
+            lifecycleScope.launch(Dispatchers.Main) {
                 categories = categoriesUiData
-                categoryListAdapter.submitList(categoriesUiData)
+                categoryAdapter.submitList(categoriesUiData)
             }
 
 
+
+    }
+
+    private fun insertCategory(categoryEntity: CategoryEntity){
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            categoryDao.insert(categoryEntity)
+            getCategoriesFromDatabase()
         }
+
     }
 }
 
-/*val categories = listOf(
-    CategoryUiData(
-        name = "ALL",
-        isSelected = false
-    ),
-    CategoryUiData(
-        name = "STUDY",
-        isSelected = false
-    ),
-    CategoryUiData(
-        name = "WORK",
-        isSelected = false
-    ),
-    CategoryUiData(
-        name = "WELLNESS",
-        isSelected = false
-    ),
-    CategoryUiData(
-        name = "HOME",
-        isSelected = false
-    ),
-    CategoryUiData(
-        name = "HEALTH",
-        isSelected = false
-    ),
-)*/
 

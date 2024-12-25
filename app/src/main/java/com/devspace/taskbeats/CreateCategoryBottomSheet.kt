@@ -9,7 +9,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textfield.TextInputEditText
 
-class CreateCategoryBottomSheet : BottomSheetDialogFragment() {
+class CreateCategoryBottomSheet (
+    private val onCreateClicked:(String)->Unit
+): BottomSheetDialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -24,6 +26,12 @@ class CreateCategoryBottomSheet : BottomSheetDialogFragment() {
         val btnCreate = view.findViewById<Button>(R.id.btn_category)
         val edt_category = view.findViewById<TextInputEditText>(R.id.edt_category_name)
 
+
+        btnCreate.setOnClickListener {
+            val name= edt_category.text.toString()
+            onCreateClicked.invoke(name)
+            dismiss()
+        }
         return view
     }
 }
