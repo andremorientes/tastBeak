@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     private var categories = listOf<CategoryUiData>()
     private var tasks = listOf<TaskUiData>()
     private val categoryAdapter = CategoryListAdapter()
-
+    private val taskAdapter = TaskListAdapter()
     val db by lazy {
         Room.databaseBuilder(
             applicationContext,
@@ -45,15 +45,20 @@ class MainActivity : AppCompatActivity() {
         val rvCategory = findViewById<RecyclerView>(R.id.rv_categories)
         val rvTask = findViewById<RecyclerView>(R.id.rv_tasks)
         val fabCreateTask = findViewById<FloatingActionButton>(R.id.fab_create_task)
-        val taskAdapter = TaskListAdapter()
+
 
 
 
         fabCreateTask.setOnClickListener {
 
-            val createTaskBottomSheet= CreateTaskBottomSheet(
+            val createTaskBottomSheet = CreateTaskBottomSheet(
                 categories
-            ){taskToBeCreated->
+            ) { taskToBeCreated ->
+                val taskEntityToBeInsert = TaskEntity(
+                    name = taskToBeCreated.name,
+                    category = taskToBeCreated.category
+                )
+                insertTask(taskEntityToBeInsert)
 
             }
             createTaskBottomSheet.show(
@@ -104,8 +109,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         rvTask.adapter = taskAdapter
-        getTaskFromDatabase(taskAdapter)
-        // taskAdapter.submitList(tasks)
+        lifecycleScope.launch(Dispatchers.IO) {
+            getTaskFromDatabase()
+        }
+
     }
 
     /* @OptIn(DelicateCoroutinesApi::class)
@@ -139,24 +146,23 @@ class MainActivity : AppCompatActivity() {
      }*/
 
     @OptIn(DelicateCoroutinesApi::class)
-    private fun getTaskFromDatabase(taskAdapter: TaskListAdapter) {
+    private fun getTaskFromDatabase() {
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            val taskFromDb: List<TaskEntity> = taskDao.getAll()
 
-            val taskiesUiData = taskFromDb.map {
-                TaskUiData(
-                    name = it.name,
-                    category = it.category
-                )
-            }
+        val taskFromDb: List<TaskEntity> = taskDao.getAll()
 
-            withContext(Dispatchers.Main) {
-                tasks = taskiesUiData
-                taskAdapter.submitList(taskiesUiData)
-            }
-
+        val taskiesUiData = taskFromDb.map {
+            TaskUiData(
+                name = it.name,
+                category = it.category
+            )
         }
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            tasks = taskiesUiData
+            taskAdapter.submitList(taskiesUiData)
+        }
+
 
     }
 
@@ -194,6 +200,13 @@ class MainActivity : AppCompatActivity() {
             getCategoriesFromDatabase()
         }
 
+    }
+
+    private fun insertTask(taskEntity: TaskEntity) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            taskDao.insert(taskEntity)
+            getTaskFromDatabase()
+        }
     }
 }
 
