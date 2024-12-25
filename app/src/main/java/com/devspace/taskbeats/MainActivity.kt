@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SnapHelper
 import androidx.room.Room
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -12,6 +14,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
+
+    private var categories = listOf<CategoryUiData>()
+    private var tasks = listOf<TaskUiData>()
 
     val db by lazy {
         Room.databaseBuilder(
@@ -42,23 +47,32 @@ class MainActivity : AppCompatActivity() {
         val categoryAdapter = CategoryListAdapter()
 
         categoryAdapter.setOnClickListener { selected ->
-           /* val categoryTemp = categories.map { item ->
-                when {
-                    item.name == selected.name && !item.isSelected -> item.copy(isSelected = true)
-                    item.name == selected.name && item.isSelected -> item.copy(isSelected = false)
-                    else -> item
-                }
-            }*/
+            if (selected.name == "+") {
 
-           /* val taskTemp =
-                if (selected.name != "ALL") {
-                    tasks.filter { it.category == selected.name }
-                } else {
-                    tasks
-                }
-            taskAdapter.submitList(taskTemp)
+                val createCategoryBottomSheet = CreateCategoryBottomSheet()
 
-            categoryAdapter.submitList(categoryTemp) */
+                createCategoryBottomSheet.show(supportFragmentManager, "createCategoryBottomSheet")
+
+            } else {
+                val categoryTemp = categories.map { item ->
+                    when {
+                        item.name == selected.name && !item.isSelected -> item.copy(isSelected = true)
+                        item.name == selected.name && item.isSelected -> item.copy(isSelected = false)
+                        else -> item
+                    }
+                }
+
+                val taskTemp =
+                    if (selected.name != "ALL") {
+                        tasks.filter { it.category == selected.name }
+                    } else {
+                        tasks
+                    }
+                taskAdapter.submitList(taskTemp)
+                categoryAdapter.submitList(categoryTemp)
+            }
+
+
         }
 
         rvCategory.adapter = categoryAdapter
@@ -69,35 +83,35 @@ class MainActivity : AppCompatActivity() {
         // taskAdapter.submitList(tasks)
     }
 
-   /* @OptIn(DelicateCoroutinesApi::class)
-    private fun insertDeafultCategory() {
+    /* @OptIn(DelicateCoroutinesApi::class)
+     private fun insertDeafultCategory() {
 
-        val categoriesEntity = categories.map {
-            CategoryEntity(
-                name = it.name,
-                isSelected = it.isSelected
-            )
-        }
+         val categoriesEntity = categories.map {
+             CategoryEntity(
+                 name = it.name,
+                 isSelected = it.isSelected
+             )
+         }
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            categoryDao.insertAll(categoriesEntity)
-        }
+         lifecycleScope.launch(Dispatchers.IO) {
+             categoryDao.insertAll(categoriesEntity)
+         }
 
-    }*/
+     }*/
 
-   /* @OptIn(DelicateCoroutinesApi::class)
-    private fun insertDefaultTask() {
-        val taskEntities = tasks.map {
-            TaskEntity(
-                category = it.category,
-                name = it.name
-            )
-        }
+    /* @OptIn(DelicateCoroutinesApi::class)
+     private fun insertDefaultTask() {
+         val taskEntities = tasks.map {
+             TaskEntity(
+                 category = it.category,
+                 name = it.name
+             )
+         }
 
-        GlobalScope.launch(Dispatchers.IO) {
-            taskDao.insertAll(taskEntities)
-        }
-    }*/
+         GlobalScope.launch(Dispatchers.IO) {
+             taskDao.insertAll(taskEntities)
+         }
+     }*/
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun getTaskFromDatabase(taskAdapter: TaskListAdapter) {
@@ -111,7 +125,9 @@ class MainActivity : AppCompatActivity() {
                     category = it.category
                 )
             }
-            withContext(Dispatchers.Main){
+
+            withContext(Dispatchers.Main) {
+                tasks = taskiesUiData
                 taskAdapter.submitList(taskiesUiData)
             }
 
@@ -132,14 +148,15 @@ class MainActivity : AppCompatActivity() {
             }.toMutableList()
 
             //add fake + category
-
             categoriesUiData.add(
                 CategoryUiData(
                     name = "+",
                     isSelected = false
                 )
             )
-            withContext(Dispatchers.Main){
+
+            withContext(Dispatchers.Main) {
+                categories = categoriesUiData
                 categoryListAdapter.submitList(categoriesUiData)
             }
 
