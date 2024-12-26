@@ -58,12 +58,26 @@ class MainActivity : AppCompatActivity() {
 
         categoryAdapter.setOnLongClickListener {categoryTobeDelete->
 
-            val categoryEntityToBeDeleted= CategoryEntity(
-                categoryTobeDelete.name,
-                categoryTobeDelete.isSelected
+            if (categoryTobeDelete.name!= "+"){
+                val title = this.getString(R.string.category_delete_title)
+                val description = this.getString(R.string.category_delete_description)
+                val btnInfo = this.getString(R.string.delete)
+                showInfoDialog(
+                    title,
+                    description,
+                    btnInfo,
+                    onClick = {
+                        val categoryEntityToBeDeleted= CategoryEntity(
+                            categoryTobeDelete.name,
+                            categoryTobeDelete.isSelected
 
-            )
-            deleteCategory(categoryEntityToBeDeleted)
+                        )
+                        deleteCategory(categoryEntityToBeDeleted)
+                    }
+                )
+            }
+
+
 
         }
         categoryAdapter.setOnClickListener { selected ->
@@ -265,6 +279,26 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager,
             "createTaskBottomSheet"
         )
+    }
+
+    private fun showInfoDialog(
+        title: String,
+        subTitle: String,
+        btnInfo: String,
+        onClick:()->Unit
+    ){
+
+        val infoShowBottomDialog= InfoBottomSheet(
+            title=title,
+            subTitle=subTitle,
+            btnInfo= btnInfo,
+            onClick
+        )
+
+        infoShowBottomDialog.show(
+            supportFragmentManager,"InfoBottomSheet"
+        )
+
     }
 
 }
