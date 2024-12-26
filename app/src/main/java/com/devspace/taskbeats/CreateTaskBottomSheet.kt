@@ -37,6 +37,7 @@ class CreateTaskBottomSheet(
                 onCreateCliked.invoke(
 
                     TaskUiData(
+                        id=0,
                         name = task,
                         category = requireNotNull(taskCategory)
                     )

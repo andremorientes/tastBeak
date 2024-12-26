@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     private var categories = listOf<CategoryUiData>()
     private var tasks = listOf<TaskUiData>()
     private val categoryAdapter = CategoryListAdapter()
-    private val taskAdapter = TaskListAdapter()
+
     val db by lazy {
         Room.databaseBuilder(
             applicationContext,
@@ -33,6 +33,9 @@ class MainActivity : AppCompatActivity() {
 
     private val taskDao by lazy {
         db.getTaskDao()
+    }
+    private val taskAdapter by lazy {
+        TaskListAdapter()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,21 +53,10 @@ class MainActivity : AppCompatActivity() {
 
 
         fabCreateTask.setOnClickListener {
-
-            val createTaskBottomSheet = CreateTaskBottomSheet(
-                categories
-            ) { taskToBeCreated ->
-                val taskEntityToBeInsert = TaskEntity(
-                    name = taskToBeCreated.name,
-                    category = taskToBeCreated.category
-                )
-                insertTask(taskEntityToBeInsert)
-
-            }
-            createTaskBottomSheet.show(
-                supportFragmentManager,
-                "createTaskBottomSheet"
-            )
+            showCreateUpdateTaskBottomSheet()
+        }
+        taskAdapter.setOnClicklistner {
+            showCreateUpdateTaskBottomSheet()
         }
 
 
@@ -109,6 +101,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         rvTask.adapter = taskAdapter
+
+
+
         lifecycleScope.launch(Dispatchers.IO) {
             getTaskFromDatabase()
         }
@@ -148,11 +143,10 @@ class MainActivity : AppCompatActivity() {
     @OptIn(DelicateCoroutinesApi::class)
     private fun getTaskFromDatabase() {
 
-
         val taskFromDb: List<TaskEntity> = taskDao.getAll()
-
-        val taskiesUiData = taskFromDb.map {
+        val taskiesUiData: List<TaskUiData> = taskFromDb.map {
             TaskUiData(
+                id = it.id,
                 name = it.name,
                 category = it.category
             )
@@ -208,6 +202,24 @@ class MainActivity : AppCompatActivity() {
             getTaskFromDatabase()
         }
     }
+
+    private fun showCreateUpdateTaskBottomSheet() {
+        val createTaskBottomSheet = CreateTaskBottomSheet(
+            categories
+        ) { taskToBeCreated ->
+            val taskEntityToBeInsert = TaskEntity(
+                name = taskToBeCreated.name,
+                category = taskToBeCreated.category
+            )
+            insertTask(taskEntityToBeInsert)
+
+        }
+        createTaskBottomSheet.show(
+            supportFragmentManager,
+            "createTaskBottomSheet"
+        )
+    }
+
 }
 
 
