@@ -56,6 +56,16 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        categoryAdapter.setOnLongClickListener {categoryTobeDelete->
+
+            val categoryEntityToBeDeleted= CategoryEntity(
+                categoryTobeDelete.name,
+                categoryTobeDelete.isSelected
+
+            )
+            deleteCategory(categoryEntityToBeDeleted)
+
+        }
         categoryAdapter.setOnClickListener { selected ->
             if (selected.name == "+") {
                 val createCategoryBottomSheet = CreateCategoryBottomSheet { categoryName ->
@@ -206,6 +216,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun deleteTask(taskEntity: TaskEntity){
+        lifecycleScope.launch(Dispatchers.IO) {
+            taskDao.delete(taskEntity)
+            getTaskFromDatabase()
+        }
+    }
+
+    private fun deleteCategory(categoryEntity: CategoryEntity){
+        lifecycleScope.launch(Dispatchers.IO) {
+            categoryDao.delete(categoryEntity)
+            getCategoriesFromDatabase()
+        }
+    }
+
     private fun showCreateUpdateTaskBottomSheet(task: TaskUiData?=null) {
         val createTaskBottomSheet = CreateOrUpdateTaskBottomSheet(
             task = task,
@@ -227,6 +251,14 @@ class MainActivity : AppCompatActivity() {
                     category = taskTobeUpdate.category
                 )
                 updateTask(taskEntityToUpdated)
+            }, onDeleteCliked = {tasktoDelete->
+                val taskEntityToDelete= TaskEntity(
+                    id = tasktoDelete.id,
+                    name = tasktoDelete.name,
+                    category = tasktoDelete.category
+                )
+                deleteTask(taskEntityToDelete)
+
             }
         )
         createTaskBottomSheet.show(

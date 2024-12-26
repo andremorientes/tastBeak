@@ -1,6 +1,7 @@
 package com.devspace.taskbeats
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
@@ -17,7 +19,8 @@ class CreateOrUpdateTaskBottomSheet(
     private val categoryList: List<CategoryUiData>,
     private val task: TaskUiData?= null,
     private val onCreateCliked: (TaskUiData) -> Unit,
-    private val onUpdateCliked: (TaskUiData) -> Unit
+    private val onUpdateCliked: (TaskUiData) -> Unit,
+    private val onDeleteCliked: (TaskUiData) -> Unit
 
 ) : BottomSheetDialogFragment() {
 
@@ -31,6 +34,7 @@ class CreateOrUpdateTaskBottomSheet(
 
         val tv_title_task= view.findViewById<TextView>(R.id.tv_create_task_title)
         val btn_CreatTask = view.findViewById<Button>(R.id.btn_create_task)
+        val btn_deleteTask = view.findViewById<Button>(R.id.btn_delete_task)
         val edt_task = view.findViewById<TextInputEditText>(R.id.edt_task)
 
 
@@ -66,9 +70,12 @@ class CreateOrUpdateTaskBottomSheet(
         }
 
         if (task== null){
+            btn_deleteTask.isVisible=false
             tv_title_task.setText(R.string.create_task_title)
             btn_CreatTask.setText(R.string.create)
+
         }else{
+            btn_deleteTask.isVisible=true
             tv_title_task.setText(R.string.update_task_title)
             btn_CreatTask.setText(R.string.update)
             edt_task.setText(task.name)
@@ -81,8 +88,8 @@ class CreateOrUpdateTaskBottomSheet(
 
 
         btn_CreatTask.setOnClickListener {
-            val name = edt_task.text.toString()
-            if (taskCategory != null) {
+            val name = edt_task.text.toString().trim()
+            if (taskCategory != null|| name.trim().isEmpty()) {
 
                 if (task== null){
                     onCreateCliked.invoke(
@@ -113,6 +120,17 @@ class CreateOrUpdateTaskBottomSheet(
                 ).show()
             }
 
+        }
+
+        btn_deleteTask.setOnClickListener {
+            if (task!= null){
+                onDeleteCliked.invoke(task)
+
+                dismiss()
+
+            }else{
+Log.d("CreateOrUpdateTaskBottomSheet","Task not found")
+            }
         }
 
 
