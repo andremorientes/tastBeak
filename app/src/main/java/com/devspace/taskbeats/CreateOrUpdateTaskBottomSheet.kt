@@ -73,6 +73,11 @@ class CreateOrUpdateTaskBottomSheet(
             btn_CreatTask.setText(R.string.update)
 
             edt_task.setText(task.name)
+
+            val currentCategory= categoryList.first{it.name ==task.category}
+            val index = categoryList.indexOf(currentCategory)
+            spinner.setSelection(index)
+
         }
 
 
