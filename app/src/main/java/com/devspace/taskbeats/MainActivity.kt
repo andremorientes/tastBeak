@@ -1,11 +1,13 @@
 package com.devspace.taskbeats
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -84,11 +86,16 @@ class MainActivity : AppCompatActivity() {
             if (selected.name == "+") {
                 val createCategoryBottomSheet = CreateCategoryBottomSheet { categoryName ->
 
-                    val categoryEntity = CategoryEntity(
-                        name = categoryName,
-                        isSelected = false
-                    )
-                    insertCategory(categoryEntity)
+                    if (categoryName.isNotEmpty()){
+                        val categoryEntity = CategoryEntity(
+                            name = categoryName,
+                            isSelected = false
+                        )
+                        insertCategory(categoryEntity)
+                    }else{
+                        Toast.makeText(baseContext," Por favor Preencha a categoria", Toast.LENGTH_LONG).show()
+                    }
+
                 }
 
                 createCategoryBottomSheet.show(supportFragmentManager, "createCategoryBottomSheet")
