@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Notas de Tarefas</string>
+    <string name="home_title">Notas de Tarefas</string>
+    <string name="create_task_title">Criar tarefa</string>
+    <string name="update_task_title">Editar Tarefa</string>
+    <string name="update">Actualizar</string>
+    <string name="create">Criar</string>
+    <string name="criar">Criar</string>
+    <string name="category_delete_title">Importante</string>
+    <string name="category_delete_description">Ao excluir uma categoria, você excluirá todas as tarefas dessa categoria. Tem certeza?</string>
+    <string name="delete">Apagar</string>
+    <string name="empty_category_title">Nenhuma categoria encontrada</string>
+    <string name="empty_category_description"> por favor crie uma nova</string>
+    <string name="create_task">Criar Tarefa</string>
+    <string name="create_btn">Criar</string>
+    <string name="delete_btn">Apagar</string>
+    <string name="hint_bottom_sheet_task">Ex: Trabalho</string>
+    <string name="add_category">Adicionar Categoria</string>
+</resources>

@@ -11,4 +11,9 @@
     <string name="delete">Delete</string>
     <string name="empty_category_title">No category found</string>
     <string name="empty_category_description"> please create new one</string>
+    <string name="create_task">Create Task</string>
+    <string name="create_btn">Create</string>
+    <string name="delete_btn">Delete</string>
+    <string name="hint_bottom_sheet_task">E.g: Work</string>
+    <string name="add_category">Add Category</string>
 </resources>

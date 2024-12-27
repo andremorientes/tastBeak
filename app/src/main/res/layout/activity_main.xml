@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:text="@string/home_title"
+        android:fontFamily="@font/poppins_semibold"
         android:textSize="36sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -69,6 +70,7 @@
             android:textSize="24sp"
             android:textStyle="bold"
             android:gravity="center"
+            android:fontFamily="@font/poppins_semibold"
             android:text="@string/empty_category_title" />
 
         <TextView
@@ -76,6 +78,7 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:gravity="center"
+            android:fontFamily="@font/poppins"
             android:text="@string/empty_category_description" />
 
         <ImageView
@@ -89,7 +92,9 @@
             android:layout_margin="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/create"/>
+            android:fontFamily="@font/poppins"
+            android:textStyle="bold"
+            android:text="@string/create_btn"/>
 
 
     </LinearLayout>

@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:text="Criar Tarefa"
+        android:text="@string/create_task"
+        android:fontFamily="@font/poppins_semibold"
         android:textSize="24sp"
         android:textStyle="bold" />
 
@@ -38,7 +39,8 @@
             android:id="@+id/edt_task"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Ex: Trabalho "
+            android:fontFamily="@font/poppins"
+            android:hint="@string/hint_bottom_sheet_task"
             android:minHeight="48dp" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -56,16 +58,24 @@
             android:id="@+id/btn_create_task"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Create"
+            android:text="@string/create_btn"
+            android:fontFamily="@font/poppins"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/blue"
             android:layout_marginEnd="4dp"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:layout_marginStart="4dp"
             android:layout_weight="1"
             android:id="@+id/btn_delete_task"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Delete" />
+            android:fontFamily="@font/poppins"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/red"
+            android:text="@string/delete_btn" />
 
     </LinearLayout>
 

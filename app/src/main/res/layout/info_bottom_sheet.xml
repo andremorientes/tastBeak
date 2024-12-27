@@ -11,11 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="32sp"
+        android:fontFamily="@font/poppins_semibold"
         tools:text="@string/category_delete_title"
         android:textStyle="bold"/>
 
 
     <TextView
+        android:fontFamily="@font/poppins"
         android:id="@+id/tv_info_subtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,6 +31,10 @@
         android:layout_marginTop="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins"
+        android:textStyle="bold"
+        android:backgroundTint="@color/red"
+        android:textColor="@color/white"
         android:text="@string/delete"/>
 
 

@@ -10,7 +10,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:text="Adicionar Categoria"
+        android:text="@string/add_category"
+        android:fontFamily="@font/poppins_semibold"
         android:textSize="24sp"
         android:textStyle="bold"/>
 
@@ -30,16 +31,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            android:hint="Ex: Trabalho "
+            android:fontFamily="@font/poppins"
+            android:hint="@string/hint_bottom_sheet_task"
             android:minHeight="48dp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
 
     <Button
         android:id="@+id/btn_category"
-        android:text="Criar"
+        android:text="@string/create_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins"
+        android:textStyle="bold"
+        android:backgroundTint="@color/blue"
+        android:textColor="@color/white"
         android:layout_margin="16dp"/>
 
 </LinearLayout>

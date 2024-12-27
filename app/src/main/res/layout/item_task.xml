@@ -10,6 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:focusable="true"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginTop="4dp"
+        app:cardCornerRadius="30dp"
         android:foreground="?android:selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -29,6 +33,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="4dp"
                 android:textSize="12sp"
+                android:fontFamily="@font/poppins"
                 tools:text="STUDY" />
 
             <TextView
@@ -39,8 +44,9 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
                 android:ellipsize="end"
-                android:maxLines="2"
+                android:maxLines="3"
                 android:textSize="18sp"
+                android:fontFamily="@font/poppins"
                 tools:text="@tools:sample/lorem/random" />
 
 
